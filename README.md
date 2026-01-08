@@ -33,4 +33,4 @@ It is responsible for end-user authentication, session issuance, and execution o
 
 ## License
 
-MIT
+Apache-2.0
