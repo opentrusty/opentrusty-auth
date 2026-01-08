@@ -1,0 +1,2 @@
+2026/01/08 00:33:37 INFO starting authd (Auth Plane)
+2026/01/08 00:33:37 ERROR failed to connect to database error="failed to ping database: failed to connect to `user=postgres database=opentrusty`:\n\t[::1]:5432 (localhost): dial error: dial tcp [::1]:5432: connect: connection refused\n\t127.0.0.1:5432 (localhost): dial error: dial tcp 127.0.0.1:5432: connect: connection refused"
