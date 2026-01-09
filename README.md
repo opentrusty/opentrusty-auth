@@ -31,6 +31,13 @@ It is responsible for end-user authentication, session issuance, and execution o
    ./authd
    ```
 
+## Deployment
+
+For production-grade deployment, we recommend using the pre-built binaries available in the [GitHub Releases](https://github.com/opentrusty/opentrusty-auth/releases).
+
+Detailed instructions are available in the [Canonical Deployment Guide](https://github.com/opentrusty/opentrusty-core/blob/main/DEPLOYMENT.md) and the `README.md` included in each release package.
+
 ## License
+
 
 Apache-2.0

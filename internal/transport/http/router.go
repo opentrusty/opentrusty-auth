@@ -46,11 +46,17 @@ func NewRouter(h *Handler) http.Handler {
 	mux.HandleFunc("/oauth2/authorize", h.Authorize)
 	mux.HandleFunc("/oauth2/token", h.Token)
 
-	// Wrap with logging and sessions
+	// Wrap with logging, sessions and CSRF
 	handler := http.Handler(mux)
 	handler = loggingMiddleware(handler)
+	handler = middleware.CSRF(h.sessionConfig.CSRFEnabled)(handler)
 	handler = middleware.AuthSession(h.sessionService, middleware.SessionConfig{
-		CookieName: h.sessionConfig.CookieName,
+		CookieName:     h.sessionConfig.CookieName,
+		CookieDomain:   h.sessionConfig.CookieDomain,
+		CookiePath:     h.sessionConfig.CookiePath,
+		CookieSecure:   h.sessionConfig.CookieSecure,
+		CookieHTTPOnly: h.sessionConfig.CookieHTTPOnly,
+		CookieSameSite: h.sessionConfig.CookieSameSite,
 	})(handler)
 
 	return handler

@@ -16,31 +16,62 @@ package config
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 )
 
 type Config struct {
-	DBURL          string
-	Port           string
-	LogLevel       string
-	IdentitySecret string
-	SessionKey     string
+	Env              string
+	DatabaseURL      string
+	Port             string
+	LogLevel         string
+	IdentitySecret   string
+	SessionSecret    string
+	BaseURL          string
+	SessionNamespace string
+	CSRFEnabled      bool
+	CookieSecure     bool
+	CookieHTTPOnly   bool
+	CookieSameSite   string
+	CookieDomain     string
+	CookieName       string
 }
 
 func Load() (*Config, error) {
 	c := &Config{
-		DBURL:          os.Getenv("OPENTRUSTY_DB_URL"),
-		Port:           os.Getenv("OPENTRUSTY_PORT"),
-		LogLevel:       os.Getenv("OPENTRUSTY_LOG_LEVEL"),
-		IdentitySecret: os.Getenv("OPENTRUSTY_IDENTITY_SECRET"),
-		SessionKey:     os.Getenv("OPENTRUSTY_AUTH_SIGNING_KEY"),
+		Env:              os.Getenv("OPENTRUSTY_ENV"),
+		DatabaseURL:      os.Getenv("OPENTRUSTY_DATABASE_URL"),
+		Port:             os.Getenv("OPENTRUSTY_AUTH_LISTEN_ADDR"),
+		LogLevel:         os.Getenv("OPENTRUSTY_LOG_LEVEL"),
+		IdentitySecret:   os.Getenv("OPENTRUSTY_IDENTITY_SECRET"),
+		SessionSecret:    os.Getenv("OPENTRUSTY_SESSION_SECRET"),
+		BaseURL:          os.Getenv("OPENTRUSTY_BASE_URL"),
+		SessionNamespace: os.Getenv("OPENTRUSTY_AUTH_SESSION_NAMESPACE"),
+		CSRFEnabled:      os.Getenv("OPENTRUSTY_AUTH_CSRF_ENABLED") != "false",
+		CookieSecure:     os.Getenv("OPENTRUSTY_COOKIE_SECURE") == "true",
+		CookieHTTPOnly:   os.Getenv("OPENTRUSTY_COOKIE_HTTPONLY") != "false",
+		CookieSameSite:   os.Getenv("OPENTRUSTY_COOKIE_SAMESITE"),
+		CookieDomain:     os.Getenv("OPENTRUSTY_COOKIE_DOMAIN"),
+		CookieName:       os.Getenv("OPENTRUSTY_COOKIE_NAME"),
 	}
 
+	if c.Env == "" {
+		c.Env = "dev"
+	}
 	if c.Port == "" {
-		c.Port = "8080"
+		c.Port = os.Getenv("OPENTRUSTY_PORT")
+		if c.Port == "" {
+			c.Port = ":8080"
+		}
 	}
 	if c.LogLevel == "" {
 		c.LogLevel = "info"
+	}
+	if c.SessionNamespace == "" {
+		c.SessionNamespace = "auth"
+	}
+	if c.CookieName == "" {
+		c.CookieName = "ot_session_auth"
 	}
 
 	if err := c.Validate(); err != nil {
@@ -51,14 +82,30 @@ func Load() (*Config, error) {
 }
 
 func (c *Config) Validate() error {
-	if c.DBURL == "" {
-		return fmt.Errorf("OPENTRUSTY_DB_URL is required")
+	if c.DatabaseURL == "" {
+		return fmt.Errorf("OPENTRUSTY_DATABASE_URL is required")
 	}
 	if c.IdentitySecret == "" {
 		return fmt.Errorf("OPENTRUSTY_IDENTITY_SECRET is required")
 	}
-	if c.SessionKey == "" {
-		return fmt.Errorf("OPENTRUSTY_AUTH_SIGNING_KEY is required")
+	if c.SessionSecret == "" {
+		return fmt.Errorf("OPENTRUSTY_SESSION_SECRET is required")
+	}
+	if c.BaseURL == "" {
+		return fmt.Errorf("OPENTRUSTY_BASE_URL is required")
 	}
 	return nil
+}
+
+func (c *Config) GetSameSite() http.SameSite {
+	switch c.CookieSameSite {
+	case "Lax":
+		return http.SameSiteLaxMode
+	case "Strict":
+		return http.SameSiteStrictMode
+	case "None":
+		return http.SameSiteNoneMode
+	default:
+		return http.SameSiteLaxMode
+	}
 }

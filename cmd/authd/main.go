@@ -45,7 +45,7 @@ func main() {
 	}
 
 	// 0. Connect to DB
-	db, err := postgres.Open(ctx, cfg.DBURL)
+	db, err := postgres.Open(ctx, cfg.DatabaseURL)
 	if err != nil {
 		slog.Error("failed to connect to database", "error", err)
 		os.Exit(1)
@@ -96,7 +96,7 @@ func main() {
 		5*time.Minute,
 		1*time.Hour,
 		24*time.Hour,
-		[]byte(cfg.SessionKey),
+		[]byte(cfg.SessionSecret),
 	)
 
 	// 3. Initialize Transport
@@ -108,8 +108,12 @@ func main() {
 		oidcService,
 		auditLogger,
 		transportHTTP.SessionConfig{
-			CookieName: "session_id",
-			CookiePath: "/",
+			CookieName:     cfg.CookieName,
+			CookiePath:     "/",
+			CookieDomain:   cfg.CookieDomain,
+			CookieSecure:   cfg.CookieSecure,
+			CookieHTTPOnly: cfg.CookieHTTPOnly,
+			CookieSameSite: cfg.GetSameSite(),
 		},
 	)
 

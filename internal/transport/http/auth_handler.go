@@ -38,6 +38,7 @@ type SessionConfig struct {
 	CookieSecure   bool
 	CookieHTTPOnly bool
 	CookieSameSite http.SameSite
+	CSRFEnabled    bool
 }
 
 // Handler holds Auth Plane HTTP handlers and dependencies
@@ -420,9 +421,11 @@ func (h *Handler) setSessionCookie(w http.ResponseWriter, sessionID string) {
 		Name:     h.sessionConfig.CookieName,
 		Value:    sessionID,
 		Path:     h.sessionConfig.CookiePath,
+		Domain:   h.sessionConfig.CookieDomain,
 		Secure:   h.sessionConfig.CookieSecure,
-		HttpOnly: true,
+		HttpOnly: h.sessionConfig.CookieHTTPOnly,
 		SameSite: h.sessionConfig.CookieSameSite,
+		MaxAge:   86400,
 		Expires:  time.Now().Add(24 * time.Hour),
 	})
 }

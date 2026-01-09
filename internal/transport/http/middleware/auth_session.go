@@ -15,25 +15,31 @@
 package middleware
 
 import (
-"context"
-"net/http"
-"github.com/opentrusty/opentrusty-core/session"
+	"context"
+	"net/http"
+
+	"github.com/opentrusty/opentrusty-core/session"
 )
 
 type SessionConfig struct {
-	CookieName string
+	CookieName     string
+	CookieDomain   string
+	CookiePath     string
+	CookieSecure   bool
+	CookieHTTPOnly bool
+	CookieSameSite http.SameSite
 }
 
 func AuthSession(ss *session.Service, config SessionConfig) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-cookie, err := r.Cookie(config.CookieName)
-if err != nil {
-next.ServeHTTP(w, r)
-return
-}
+			cookie, err := r.Cookie(config.CookieName)
+			if err != nil {
+				next.ServeHTTP(w, r)
+				return
+			}
 
-sess, err := ss.Get(r.Context(), cookie.Value)
+			sess, err := ss.Get(r.Context(), cookie.Value)
 			if err != nil {
 				next.ServeHTTP(w, r)
 				return
@@ -42,6 +48,32 @@ sess, err := ss.Get(r.Context(), cookie.Value)
 			// Inject userID into context
 			ctx := context.WithValue(r.Context(), "user_id", sess.UserID)
 			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+
+// CSRF protects against Cross-Site Request Forgery for state-changing requests.
+func CSRF(enabled bool) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if !enabled {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			// Skip for safe methods
+			if r.Method == http.MethodGet || r.Method == http.MethodHead || r.Method == http.MethodOptions || r.Method == http.MethodTrace {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			csrfToken := r.Header.Get("X-CSRF-Token")
+			if csrfToken == "" {
+				http.Error(w, "CSRF protection: X-CSRF-Token header is required for state-changing operations", http.StatusForbidden)
+				return
+			}
+
+			next.ServeHTTP(w, r)
 		})
 	}
 }
