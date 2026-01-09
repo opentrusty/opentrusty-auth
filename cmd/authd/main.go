@@ -88,7 +88,7 @@ func main() {
 	)
 
 	// 2. Initialize Auth plane services
-	oidcService, _ := oidc.NewService("http://localhost:8080")
+	oidcService, _ := oidc.NewService(cfg.BaseURL)
 
 	oauth2Service := oauth2.NewService(
 		clientRepo,
@@ -124,7 +124,7 @@ func main() {
 	router := transportHTTP.NewRouter(handler)
 
 	server := &http.Server{
-		Addr:    ":" + cfg.Port,
+		Addr:    cfg.Port,
 		Handler: router,
 	}
 
