@@ -4,7 +4,7 @@ This package contains the OpenTrusty Authentication Plane (authd), which handles
 
 ## Package Contents
 
-- `opentrusty-auth`: The Go binary.
+- `opentrusty-authd`: The Go binary.
 - `install.sh`: Automated installer script.
 - `systemd/`: systemd unit files.
 - `.env.example`: Example environment variables.

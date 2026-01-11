@@ -25,7 +25,7 @@ jobs:
 
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o opentrusty-auth -ldflags "-X main.version=$VERSION" ./cmd/authd
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o opentrusty-authd -ldflags "-X main.version=$VERSION" ./cmd/authd
 
       - name: Prepare Release Artifacts
         id: prepare
@@ -35,7 +35,7 @@ jobs:
           mkdir -p $DIR/systemd
           
           # Copy binary
-          cp opentrusty-auth $DIR/
+          cp opentrusty-authd $DIR/
           
           # Copy deployment assets
           cp deploy/install.sh $DIR/

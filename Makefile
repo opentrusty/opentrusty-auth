@@ -1,17 +1,18 @@
 # Makefile for OpenTrusty Auth
 
-BINARY_NAME=authd
+BINARY_NAME=opentrusty-authd
 MAIN_PATH=./cmd/authd/main.go
 
-.PHONY: build test lint clean help run-health
+.PHONY: build test lint clean help run-health release
 
 help:
 	@echo "OpenTrusty Auth Makefile"
 	@echo "Usage:"
-	@echo "  make build       - Build the authd binary"
+	@echo "  make build       - Build the opentrusty-auth binary"
 	@echo "  make test        - Run all tests"
 	@echo "  make lint        - Run linter"
 	@echo "  make run-health  - Check if service is healthy (requires running service)"
+	@echo "  make release     - Build and package release tarball"
 	@echo "  make clean       - Clean build artifacts"
 
 build:
@@ -38,3 +39,18 @@ run-health:
 clean:
 	go clean -cache
 	rm -f $(BINARY_NAME)
+	rm -rf release/
+
+# Release package - creates a deployment-ready tarball
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+RELEASE_DIR = release/opentrusty-auth-$(VERSION)
+
+release: build
+	@echo "Creating release package for $(VERSION)..."
+	@mkdir -p $(RELEASE_DIR)
+	@cp $(BINARY_NAME) $(RELEASE_DIR)/
+	@cp -r deploy/* $(RELEASE_DIR)/
+	@cp .env.example $(RELEASE_DIR)/
+	@cp LICENSE $(RELEASE_DIR)/ 2>/dev/null || echo "No LICENSE file found"
+	@cd release && tar -czf opentrusty-auth-$(VERSION)-linux-amd64.tar.gz opentrusty-auth-$(VERSION)
+	@echo "✓ Release package created: release/opentrusty-auth-$(VERSION)-linux-amd64.tar.gz"
