@@ -27,7 +27,7 @@ This package contains the OpenTrusty Authentication Plane (authd), which handles
 
 4. Start the service:
    ```bash
-   sudo systemctl enable --now opentrusty-auth
+   sudo systemctl enable --now opentrusty-authd
    ```
 
 ## Configuration
