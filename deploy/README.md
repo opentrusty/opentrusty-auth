@@ -33,3 +33,5 @@ This package contains the OpenTrusty Authentication Plane (authd), which handles
 ## Configuration
 
 The Auth Plane requires connection to the OpenTrusty PostgreSQL database and shared OPENTRUSTY_IDENTITY_SECRET with the Admin Plane. Refer to `.env.example` for detailed variable descriptions.
+
+Detailed deployment instructions for the entire platform are available in the [OpenTrusty Deployment Guide](https://github.com/opentrusty/opentrusty-cli/blob/main/DEPLOYMENT.md).
