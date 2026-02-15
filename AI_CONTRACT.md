@@ -12,10 +12,10 @@
 - **NO Direct User Mutation**: Must use core services for authenticated profile updates only.
 
 ## Allowed Dependencies
-- 
+- `github.com/opentrusty/opentrusty-core`
 
 ## Forbidden Dependencies
-- **NO dependencies** on  or .
+- **NO dependencies** on `opentrusty-admin` or `opentrusty-control-panel`.
 
 ## Change Discipline
 - Changes to token claims or OIDC discovery MUST update docs/oidc/capabilities.md.
@@ -23,4 +23,4 @@
 
 ## Invariants
 - **Audit Writing**: MUST log all security-sensitive protocol events.
-- **Protocol Strictness**: redirec_uri exact match as per RFC 6749.
+- **Protocol Strictness**: redirect_uri exact match as per RFC 6749.

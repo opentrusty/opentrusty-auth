@@ -23,7 +23,7 @@ This package contains the OpenTrusty Authentication Plane (authd), which handles
    sudo ./install.sh
    ```
 
-3. Configure environment variables in `/etc/opentrusty/auth.env` and `/etc/opentrusty/shared.env`.
+3. Configure environment variables in `/etc/opentrusty/auth.env`.
 
 4. Start the service:
    ```bash
@@ -32,4 +32,4 @@ This package contains the OpenTrusty Authentication Plane (authd), which handles
 
 ## Configuration
 
-The Auth Plane requires connection to the OpenTrusty PostgreSQL database and shared secrets with the Admin Plane. Refer to `.env.example` for detailed variable descriptions.
+The Auth Plane requires connection to the OpenTrusty PostgreSQL database and shared OPENTRUSTY_IDENTITY_SECRET with the Admin Plane. Refer to `.env.example` for detailed variable descriptions.
