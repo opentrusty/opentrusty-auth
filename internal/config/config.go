@@ -46,11 +46,19 @@ type Config struct {
 
 func Load() (*Config, error) {
 	c := &Config{
-		Env:            os.Getenv("OPENTRUSTY_ENV"),
-		Port:           os.Getenv("OPENTRUSTY_AUTH_LISTEN_ADDR"),
-		CookieSameSite: os.Getenv("OPENTRUSTY_COOKIE_SAMESITE"),
-		CookieDomain:   os.Getenv("OPENTRUSTY_COOKIE_DOMAIN"),
-		CookieName:     os.Getenv("OPENTRUSTY_COOKIE_NAME"),
+		Env:              os.Getenv("OPENTRUSTY_ENV"),
+		Port:             os.Getenv("OPENTRUSTY_AUTH_LISTEN_ADDR"),
+		LogLevel:         os.Getenv("OPENTRUSTY_LOG_LEVEL"),
+		IdentitySecret:   os.Getenv("OPENTRUSTY_IDENTITY_SECRET"),
+		SessionSecret:    os.Getenv("OPENTRUSTY_SESSION_SECRET"),
+		BaseURL:          os.Getenv("OPENTRUSTY_BASE_URL"),
+		SessionNamespace: os.Getenv("OPENTRUSTY_AUTH_SESSION_NAMESPACE"),
+		CSRFEnabled:      os.Getenv("OPENTRUSTY_AUTH_CSRF_ENABLED") != "false",
+		CookieSecure:     os.Getenv("OPENTRUSTY_COOKIE_SECURE") == "true",
+		CookieHTTPOnly:   os.Getenv("OPENTRUSTY_COOKIE_HTTPONLY") != "false",
+		CookieSameSite:   os.Getenv("OPENTRUSTY_COOKIE_SAMESITE"),
+		CookieDomain:     os.Getenv("OPENTRUSTY_COOKIE_DOMAIN"),
+		CookieName:       os.Getenv("OPENTRUSTY_COOKIE_NAME"),
 
 		DBHost:     os.Getenv("OPENTRUSTY_DB_HOST"),
 		DBPort:     os.Getenv("OPENTRUSTY_DB_PORT"),
