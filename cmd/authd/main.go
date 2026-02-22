@@ -75,7 +75,7 @@ func main() {
 	auditRepo := postgres.NewAuditRepository(db)
 	auditLogger := audit.NewRepositoryLogger(auditRepo)
 
-	userService := user.NewService(userRepo, hasher, auditLogger, 5, 15*time.Minute, cfg.IdentitySecret)
+	userService := user.NewService(userRepo, hasher, auditLogger, 5, 15*time.Minute, string(config.DecodeSecret(cfg.IdentitySecret)))
 
 	sessionRepo := postgres.NewSessionRepository(db)
 	sessionService := session.NewService(sessionRepo, 24*time.Hour, 1*time.Hour)
@@ -113,7 +113,7 @@ func main() {
 		5*time.Minute,
 		1*time.Hour,
 		24*time.Hour,
-		[]byte(cfg.SessionSecret),
+		config.DecodeSecret(cfg.SessionSecret),
 	)
 
 	// 3. Initialize Transport
